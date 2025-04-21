@@ -9,10 +9,8 @@ import (
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
-	// Публичная ручка
 	r.POST("/dummyLogin", handlers.DummyLogin)
 
-	// Защищённые ручки
 	auth := r.Group("/", middleware.AuthMiddleware())
 	{
 		auth.POST("/pvz", handlers.CreatePVZ)
