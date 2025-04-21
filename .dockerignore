@@ -1,0 +1,6 @@
+**/vendor
+**/*.swp
+*.log
+*.tmp
+node_modules
+.git
