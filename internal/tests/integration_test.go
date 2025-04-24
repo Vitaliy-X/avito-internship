@@ -76,7 +76,10 @@ func closeReception(t *testing.T, token, pvzID string) {
 	assert.NoError(t, err)
 	defer resp.Body.Close()
 
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		t.Fatalf("Closing reception failed: %s\nStatus: %d\nResponse: %s", http.StatusText(resp.StatusCode), resp.StatusCode, string(body))
+	}
 }
 
 func postJSON(t *testing.T, path, token string, payload interface{}) {
@@ -87,7 +90,11 @@ func postJSON(t *testing.T, path, token string, payload interface{}) {
 	resp, err := http.DefaultClient.Do(req)
 	assert.NoError(t, err)
 	defer resp.Body.Close()
-	assert.True(t, resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated)
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		body, _ := io.ReadAll(resp.Body)
+		t.Fatalf("POST %s failed: %s\nStatus: %d\nResponse: %s", path, http.StatusText(resp.StatusCode), resp.StatusCode, string(body))
+	}
 }
 
 func decodeJSON(t *testing.T, r io.Reader, v interface{}) {
